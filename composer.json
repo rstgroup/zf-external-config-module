@@ -1,0 +1,10 @@
+{
+    "name": "rstgroup/zf-consul-config-module",
+    "description": "Module responsible for fetching configuration from Consul Agent.",
+    "authors": [
+        {
+            "name": "Artur Wolny",
+            "email": "artur.wolny@rst.com.pl"
+        }
+    ]
+}
