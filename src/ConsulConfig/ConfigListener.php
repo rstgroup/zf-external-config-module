@@ -12,7 +12,7 @@ final class ConfigListener
     public function onMergeConfig(ModuleEvent $event)
     {
         $configListener = $event->getConfigListener();
-        $config         = $configListener->getMergedConfig();
+        $config         = $configListener->getMergedConfig(false);
 
         $config = ArrayUtils::merge(
             $config,
