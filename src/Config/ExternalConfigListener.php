@@ -26,7 +26,7 @@ final class ExternalConfigListener
         unset($appConfig['rst_group']['external_config']);
 
         // init service manager - as it is required to
-        $this->initServiceManager($config['service_manager']);
+        $this->initServiceManager($config['service_manager'], $appConfig);
 
         // merge config from each provider
         foreach ($this->getConfigProviders($config['providers']) as $configProvider) {
@@ -40,7 +40,7 @@ final class ExternalConfigListener
      * @codeCoverageIgnore
      * @return ContainerInterface
      */
-    private function getContainer()
+    public function getInnerContainer()
     {
         if (!isset($this->configServiceManager)) {
             throw new \RuntimeException("ServiceManager hasn't been initialized!");
@@ -49,9 +49,10 @@ final class ExternalConfigListener
         return $this->configServiceManager;
     }
 
-    private function initServiceManager(array $serviceManagerConfiguration)
+    private function initServiceManager(array $serviceManagerConfiguration, array $appConfig)
     {
         $this->configServiceManager = new ServiceManager($serviceManagerConfiguration);
+        $this->configServiceManager->setService('config', $appConfig);
     }
 
     /**
@@ -60,7 +61,7 @@ final class ExternalConfigListener
      */
     private function getConfigProviders(array $configProviders)
     {
-        $container = $this->getContainer();
+        $container = $this->getInnerContainer();
 
         return array_map([$container, 'get'], $configProviders);
     }

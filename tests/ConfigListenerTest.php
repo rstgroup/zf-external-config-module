@@ -4,11 +4,14 @@
 namespace RstGroup\ZfExternalConfigModule\Tests;
 
 
+use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use RstGroup\ZfExternalConfigModule\Config\ExternalConfigListener;
 use RstGroup\ZfExternalConfigModule\Config\ConfigProviderInterface;
 use RstGroup\ZfExternalConfigModule\Module;
 use RstGroup\ZfExternalConfigModule\Tests\Dummies\DummyConfigMerger;
+use RstGroup\ZfExternalConfigModule\Tests\Dummies\DummyProviderWithInnerContainer;
+use RstGroup\ZfExternalConfigModule\Tests\Dummies\DummyProviderWithInnerContainerFactory;
 use RstGroup\ZfExternalConfigModule\Tests\Dummies\TestEventManager;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\ModuleManager\ModuleManager;
@@ -90,6 +93,45 @@ class ConfigListenerTest extends TestCase
                 ],
             ],
             $moduleEvent->getConfigListener()->getMergedConfig(false)
+        );
+    }
+
+    public function testInnerServiceManagerHasAppsConfigurationAvailable()
+    {
+        // given: var to store config from inner container
+        $configFromInnerContainer = null;
+
+        // given: application's merged config with information about external config provider..
+        $appsMergedConfig = [
+            'name'      => 'application',
+            'rst_group' => [
+                'external_config' => [
+                    'providers'       => [],
+                    'service_manager' => [],
+                ],
+            ],
+        ];
+
+        // given: Module Event with merged config
+        $zendConfigListener = new DummyConfigMerger();
+        $zendConfigListener->setMergedConfig($appsMergedConfig);
+
+        $moduleEvent = new ModuleEvent(ModuleEvent::EVENT_MERGE_CONFIG);
+        $moduleEvent->setConfigListener($zendConfigListener);
+
+        // given:
+        $configListener = new ExternalConfigListener();
+
+        // when:
+        $configListener->onMergeConfig($moduleEvent);
+
+        // then:
+        $this->assertEquals(
+            [
+                'name'      => 'application',
+                'rst_group' => [],
+            ],
+            $configListener->getInnerContainer()->get('config')
         );
     }
 }
