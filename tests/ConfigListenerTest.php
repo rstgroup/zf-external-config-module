@@ -131,14 +131,14 @@ class ConfigListenerTest extends TestCase
                 'name'      => 'application',
                 'rst_group' => [],
             ],
-            $configListener->getInnerContainer()->get('config')
+            $configListener->getInnerContainer()->get(ExternalConfigListener::SERVICE_APPLICATION_CONFIG)
         );
         $this->assertEquals(
             [
                 'providers'       => [],
                 'service_manager' => [],
             ],
-            $configListener->getInnerContainer()->get('external_config')
+            $configListener->getInnerContainer()->get(ExternalConfigListener::SERVICE_EXTERNALS_CONFIG)
         );
     }
 }

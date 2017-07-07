@@ -11,6 +11,9 @@ use Zend\Stdlib\ArrayUtils;
 
 final class ExternalConfigListener
 {
+    const SERVICE_APPLICATION_CONFIG = 'config';
+    const SERVICE_EXTERNALS_CONFIG = 'external_config';
+
     /** @var ServiceManager */
     private $configServiceManager;
 
@@ -52,8 +55,8 @@ final class ExternalConfigListener
     private function initServiceManager(array $serviceManagerConfiguration, array $appConfig, array $externalConfigsConfig)
     {
         $this->configServiceManager = new ServiceManager($serviceManagerConfiguration);
-        $this->configServiceManager->setService('config', $appConfig);
-        $this->configServiceManager->setService('external_config', $externalConfigsConfig);
+        $this->configServiceManager->setService(self::SERVICE_APPLICATION_CONFIG, $appConfig);
+        $this->configServiceManager->setService(self::SERVICE_EXTERNALS_CONFIG, $externalConfigsConfig);
     }
 
     /**
