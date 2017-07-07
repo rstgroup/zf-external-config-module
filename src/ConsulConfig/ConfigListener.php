@@ -16,7 +16,7 @@ final class ConfigListener
 
         $config = ArrayUtils::merge(
             $config,
-            $this->getConsulConfig($config['name'], $config['rst_group']['consul_config']['base_url'])
+            $this->getConsulConfig($config['rst-group-api-rest']['service']['name'], $config['rst_group']['consul_config']['base_url'])
         );
 
         $configListener->setMergedConfig($config);
