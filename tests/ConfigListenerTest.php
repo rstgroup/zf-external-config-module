@@ -96,7 +96,7 @@ class ConfigListenerTest extends TestCase
         );
     }
 
-    public function testInnerServiceManagerHasAppsConfigurationAvailable()
+    public function testInnerServiceManagerHasAppsAndExternalConfigurationAvailable()
     {
         // given: var to store config from inner container
         $configFromInnerContainer = null;
@@ -132,6 +132,13 @@ class ConfigListenerTest extends TestCase
                 'rst_group' => [],
             ],
             $configListener->getInnerContainer()->get('config')
+        );
+        $this->assertEquals(
+            [
+                'providers'       => [],
+                'service_manager' => [],
+            ],
+            $configListener->getInnerContainer()->get('external_config')
         );
     }
 }

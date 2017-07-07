@@ -26,7 +26,7 @@ final class ExternalConfigListener
         unset($appConfig['rst_group']['external_config']);
 
         // init service manager - as it is required to
-        $this->initServiceManager($config['service_manager'], $appConfig);
+        $this->initServiceManager($config['service_manager'], $appConfig, $config);
 
         // merge config from each provider
         foreach ($this->getConfigProviders($config['providers']) as $configProvider) {
@@ -49,10 +49,11 @@ final class ExternalConfigListener
         return $this->configServiceManager;
     }
 
-    private function initServiceManager(array $serviceManagerConfiguration, array $appConfig)
+    private function initServiceManager(array $serviceManagerConfiguration, array $appConfig, array $externalConfigsConfig)
     {
         $this->configServiceManager = new ServiceManager($serviceManagerConfiguration);
         $this->configServiceManager->setService('config', $appConfig);
+        $this->configServiceManager->setService('external_config', $externalConfigsConfig);
     }
 
     /**
