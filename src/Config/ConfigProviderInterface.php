@@ -1,7 +1,7 @@
 <?php
 
 
-namespace RstGroup\ZfExternalConfigModule;
+namespace RstGroup\ZfExternalConfigModule\Config;
 
 
 interface ConfigProviderInterface

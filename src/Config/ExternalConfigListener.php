@@ -1,15 +1,16 @@
 <?php
 
 
-namespace RstGroup\ZfExternalConfigModule;
+namespace RstGroup\ZfExternalConfigModule\Config;
 
 
 use Interop\Container\ContainerInterface;
+use RstGroup\ZfExternalConfigModule\Config\ConfigProviderInterface;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
 
-final class ConfigListener
+final class ExternalConfigListener
 {
     /** @var ServiceManager */
     private $configServiceManager;
@@ -17,20 +18,27 @@ final class ConfigListener
     public function onMergeConfig(ModuleEvent $event)
     {
         $configListener = $event->getConfigListener();
-        $config         = $configListener->getMergedConfig(false);
+        $appConfig      = $configListener->getMergedConfig(false);
+
+        // get all configuration into the variable..
+        $config = $appConfig['rst_group']['external_config'];
+
+        // ..and remove it from app's config - because we don't need it cached
+        unset($appConfig['rst_group']['external_config']);
 
         // init service manager - as it is required to
-        $this->initServiceManager($config['rst_group']['external_config']['service_manager']);
+        $this->initServiceManager($config['service_manager']);
 
         // merge config from each provider
-        foreach ($this->getConfigProviders($config['rst_group']['external_config']['providers']) as $configProvider) {
-            $config = ArrayUtils::merge($config, $configProvider->getConfig());
+        foreach ($this->getConfigProviders($config['providers']) as $configProvider) {
+            $appConfig = ArrayUtils::merge($appConfig, $configProvider->getConfig());
         }
 
-        $configListener->setMergedConfig($config);
+        $configListener->setMergedConfig($appConfig);
     }
 
     /**
+     * @codeCoverageIgnore
      * @return ContainerInterface
      */
     private function getContainer()
