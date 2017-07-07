@@ -1,10 +1,10 @@
 <?php
 
 
-namespace RstGroup\ZfConsulConfigModule;
+namespace RstGroup\ZfExternalConfigModule;
 
 
-use RstGroup\ZfConsulConfigModule\ConsulConfig\ConfigListener;
+use RstGroup\ZfExternalConfigModule\ConfigListener;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\ModuleManager\ModuleManager;
@@ -20,8 +20,10 @@ final class Module implements ConfigProviderInterface
     public function getConfig()
     {
         return [
-            'listeners' => [
-
+            'rst_group' => [
+                'consul_config' => [
+                    'base_url' => 'http://localhost:8500'
+                ]
             ]
         ];
     }
@@ -34,6 +36,6 @@ final class Module implements ConfigProviderInterface
 
         $eventManager->attach(ModuleEvent::EVENT_MERGE_CONFIG, [
             $configListener, 'onMergeConfig'
-        ], 1001);
+        ], -1000);
     }
 }
