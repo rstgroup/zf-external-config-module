@@ -5,7 +5,6 @@ namespace RstGroup\ZfExternalConfigModule\Config;
 
 
 use Interop\Container\ContainerInterface;
-use RstGroup\ZfExternalConfigModule\Config\ConfigProviderInterface;
 use Zend\ModuleManager\ModuleEvent;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ArrayUtils;
