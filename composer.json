@@ -1,5 +1,5 @@
 {
-    "name": "rstgroup/zf-consul-config-module",
+    "name": "rstgroup/zf-external-config-module",
     "description": "Module responsible for fetching configuration from Consul Agent.",
     "authors": [
         {
