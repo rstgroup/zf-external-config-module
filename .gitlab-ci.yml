@@ -1,0 +1,24 @@
+.test_scheme: &test_scheme
+  stage: test
+  before_script:
+    - eval $(ssh-agent -s)
+    - echo -e "$SSH_PRIVATE_KEY_LT" > /tmp/.key_lt
+    - echo -e "$SSH_PRIVATE_KEY_RST" > /tmp/.key_rst
+    - chmod 600 /tmp/.key_lt /tmp/.key_rst
+    - ssh-add /tmp/.key_lt /tmp/.key_rst
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - composer install --no-progress --dev --no-suggest -n
+  script:
+    - composer run unit-tests
+
+php_56_ut:
+  <<: *test_scheme
+  image: dev-docker-registry0.km.rst.com.pl/libraries/php:5.6
+php_70_ut:
+  <<: *test_scheme
+  image: dev-docker-registry0.km.rst.com.pl/libraries/php:7.0
+php_71_ut:
+  <<: *test_scheme
+  image: dev-docker-registry0.km.rst.com.pl/libraries/php:7.1-alpine
+
