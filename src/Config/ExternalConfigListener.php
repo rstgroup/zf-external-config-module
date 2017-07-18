@@ -66,7 +66,26 @@ final class ExternalConfigListener
     private function getConfigProviders(array $configProviders)
     {
         $container = $this->getInnerContainer();
+        $providers = [];
 
-        return array_map([$container, 'get'], $configProviders);
+        foreach ($configProviders as $providerService => $isEnabled) {
+            // first case - provider given without enabled/disabled value
+            if (is_int($providerService) && is_string($isEnabled)) {
+                throw new \RuntimeException(sprintf(
+                    "Provided '%s' is wrongly defined. It should be passed as array key, with enabled/disabled flag provided as value.",
+                    $isEnabled
+                ));
+            // second case - provider as key, value determines if it's enabled
+            } else if ($this->isEnabled($isEnabled)) {
+                $providers[] = $container->get($providerService);
+            }
+        }
+
+        return $providers;
+    }
+
+    private function isEnabled($enabled)
+    {
+        return in_array($enabled, [1, '1', 'on', 'true', true, 'enabled'], true);
     }
 }

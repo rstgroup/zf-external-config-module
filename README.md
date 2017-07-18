@@ -47,7 +47,7 @@ return [
     'rst_group' => [
         'external_config' => [
             'providers' => [
-                'YourProviderService'
+                'YourProviderService' => true,
             ],
             'service_manager' => [
                 'factories' => [
@@ -59,11 +59,40 @@ return [
 ];
 ```
 
-The module skims through providers defined in: 
+The module skims through enabled providers defined in: 
 ```php
 rst_group->external_config->providers
 ````
 and creates them using Inner Service Manager.
+
+### Enabling and disabling providers
+
+Disabled providers, even though they are defined, don't participate in creation of
+final configuration. 
+
+Here's an example how to mark defined provider enabled or disabled:
+ 
+```php
+return [
+    'rst_group' => [
+        'external_config' => [
+            'providers' => [
+                
+                'EnabledProvider#1' => true,
+                'EnabledProvider#2' => 'true',
+                'EnabledProvider#3' => 'on',
+                'EnabledProvider#4' => 1,
+                
+                'DisabledProvider#1' => false,
+                'DisabledProvider#2' => 'false',
+                'DisabledProvider#3' => 'off',
+                'DisabledProvider#4' => 0,
+                
+            ],
+        ],
+    ],
+];
+```
 
 ### Inner Service Manager
 

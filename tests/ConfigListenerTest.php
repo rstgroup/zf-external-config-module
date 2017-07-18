@@ -41,6 +41,99 @@ class ConfigListenerTest extends TestCase
         $this->assertSame(1, $eventManager->countEventListeners(ModuleEvent::EVENT_MERGE_CONFIG));
     }
 
+    /**
+     * @dataProvider enabledDisabledFlagsProvider
+     *
+     * @param mixed $enableValue
+     * @param mixed $disableValue
+     */
+    public function testItSupportsDisablingAndEnablingProviders($enableValue, $disableValue)
+    {
+        // given: external config provider
+        $enabledConfigProvider  = $this->getMockBuilder(ConfigProviderInterface::class)->getMock();
+        $disabledConfigProvider = $this->getMockBuilder(ConfigProviderInterface::class)->getMock();
+
+        // given: application's merged config with information about external config provider..
+        $appsMergedConfig = [
+            'name'      => 'application',
+            'rst_group' => [
+                'external_config' => [
+                    'providers'       => [
+                        'EnabledProvider'  => $enableValue,
+                        'DisabledProvider' => $disableValue,
+                    ],
+                    'service_manager' => [
+                        'services' => [
+                            'EnabledProvider'  => $enabledConfigProvider,
+                            'DisabledProvider' => $disabledConfigProvider,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        // given: Module Event with merged config
+        $zendConfigListener = new DummyConfigMerger();
+        $zendConfigListener->setMergedConfig($appsMergedConfig);
+
+        $moduleEvent = new ModuleEvent(ModuleEvent::EVENT_MERGE_CONFIG);
+        $moduleEvent->setConfigListener($zendConfigListener);
+
+        // given:
+        $configListener = new ExternalConfigListener();
+
+        // expect: enabled provider will give configuration
+        $enabledConfigProvider->expects($this->once())->method('getConfig')->willReturn([]);
+        // expect: disabled provider will not be asked for config
+        $disabledConfigProvider->expects($this->never())->method('getConfig');
+
+        // when:
+        $configListener->onMergeConfig($moduleEvent);
+    }
+
+    public function enabledDisabledFlagsProvider()
+    {
+        return [
+            'string 1/0' => ['1', '0'],
+            'int 1/0' => [1, 0],
+            'boolean values' => [true, false],
+            'string enabled/disabled' => ['enabled', 'disabled'],
+            'string on/off' => ['on', 'off']
+        ];
+    }
+
+    public function testItDoesNotAcceptProvidersDefinedWithoutFlag()
+    {
+        // given: application's merged config with information about external config provider..
+        $appsMergedConfig = [
+            'name'      => 'application',
+            'rst_group' => [
+                'external_config' => [
+                    'providers'       => [
+                        'WronglyDefinedProvider'
+                    ],
+                    'service_manager' => [],
+                ],
+            ],
+        ];
+
+        // given: Module Event with merged config
+        $zendConfigListener = new DummyConfigMerger();
+        $zendConfigListener->setMergedConfig($appsMergedConfig);
+
+        $moduleEvent = new ModuleEvent(ModuleEvent::EVENT_MERGE_CONFIG);
+        $moduleEvent->setConfigListener($zendConfigListener);
+
+        // given:
+        $configListener = new ExternalConfigListener();
+
+        // expect: exception that provider is not properly defined
+        $this->expectException(\RuntimeException::class);
+
+        // when:
+        $configListener->onMergeConfig($moduleEvent);
+    }
+
     public function testItMergesConfigFromGivenProviders()
     {
         // given: external config provider
@@ -59,7 +152,7 @@ class ConfigListenerTest extends TestCase
             'rst_group' => [
                 'external_config' => [
                     'providers'       => [
-                        'DummyProvider',
+                        'DummyProvider' => true,
                     ],
                     'service_manager' => [
                         'services' => [
