@@ -1,6 +1,7 @@
 {
     "name": "rstgroup/zf-external-config-module",
     "description": "Module responsible for fetching configuration from external sources.",
+    "license": "MIT",
     "authors": [
         {
             "name": "Artur Wolny",
@@ -18,7 +19,7 @@
         }
     },
     "require": {
-        "php": ">= 5.6",
+        "php": "^5.6 || ^7",
         "zendframework/zend-modulemanager": "^2.7",
         "zendframework/zend-servicemanager": "^3.3"
     },

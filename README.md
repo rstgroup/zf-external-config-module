@@ -8,26 +8,13 @@ via Composer or written it your application's code.
 
 ## Installation
 
-You have to add the repository to your `composer.json` file:
-
-```json
-{
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@gitlab.trans-dev.loc:devops/zf-external-config-module.git"
-        }
-    ]
-}
-```
-
-...and require module with Composer:
+Require module with Composer:
 
 ```bash
 composer require rstgroup/zf-external-config-module
 ```
 
-The last step is adding module to ZF system configuration (`config/application.config.php`):
+The next step is adding module to ZF system configuration (`config/application.config.php`):
 ```php
 return [
     'modules' => [
@@ -61,7 +48,7 @@ return [
 
 The module skims through enabled providers defined in: 
 ```php
-rst_group->external_config->providers
+rst_group.external_config.providers
 ````
 and creates them using Inner Service Manager.
 
@@ -138,7 +125,7 @@ final class ExampleServiceFactory {
 }
 ```
 
->   Note that the `rst_group -> external_config` key is removed from application's configuration,
+>   Note that the `rst_group.external_config` key is removed from application's configuration,
 >   but you can still get it using module's config.
 
 ## Writing your own provider
@@ -152,4 +139,4 @@ provider to this package's `suggest`ed providers!
 
 ## Suggested providers
 
-Consul KV Storage: [rstgroup/zf-external-config-consul-provider](https://gitlab.trans-dev.loc/devops/zf-external-config-consul-provider)
+Consul KV Storage: [rstgroup/zf-external-config-consul-provider](https://github.com/rstgroup/zf-external-config-consul-provider)
